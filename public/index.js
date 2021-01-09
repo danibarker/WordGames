@@ -28,7 +28,6 @@ setInterval(async () => {
     let res = await fetch('/gameState')
     let players = document.getElementById('players')
     let gameState = await res.json()
-    console.log(gameState)
     players.innerHTML = ''
     for (player of gameState.players) {
         let p = document.createElement('li')
