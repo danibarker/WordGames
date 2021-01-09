@@ -19,7 +19,8 @@ app.get("/logout/:name", async (req, res) => {
     players = JSON.parse(fs.readFileSync("players.json"));
     players.push(req.params.name);
     numPlayers = players.length
-    fs.writeFileSync("players.json", JSON.stringify(players)); 
+  fs.writeFileSync("players.json", JSON.stringify(players)); 
+  res.sendStatus(201)
 });
 app.get('/gameState', async (req, res) => {
     res.json(players)
