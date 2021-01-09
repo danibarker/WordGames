@@ -4,41 +4,41 @@ const cors = require("cors");
 const fs = require("fs");
 const PORT = process.env.PORT || 5001;
 const app = express();
-let playerOnTurn = 0
-let numPlayers = 0
-let players = []
-app.use(express.json())
+let playerOnTurn = 0;
+let numPlayers = 0;
+let players = [];
+let gameState = {};
+app.use(express.json());
 app.get("/login/:name", async (req, res) => {
-  players = JSON.parse(fs.readFileSync("players.json"));
+    players = JSON.parse(fs.readFileSync("players.json"));
     players.push(req.params.name);
-    numPlayers=players.length
-  fs.writeFileSync("players.json", JSON.stringify(players));
-  res.status(200).send(req.params.name);
+    numPlayers = players.length;
+    fs.writeFileSync("players.json", JSON.stringify(players));
+    res.status(200).send(req.params.name);
 });
 app.get("/logout/:name", async (req, res) => {
     players = JSON.parse(fs.readFileSync("players.json"));
-    players.push(req.params.name);
-    numPlayers = players.length
-  fs.writeFileSync("players.json", JSON.stringify(players)); 
-  res.sendStatus(201)
+    players = players.filter((user) => user != req.params.name);
+    numPlayers = players.length;
+    fs.writeFileSync("players.json", JSON.stringify(players));
+    res.sendStatus(201);
 });
-app.get('/gameState', async (req, res) => {
-    res.json(players)
-})
-app.get('/whois', async (req, res) => {
-    players = JSON.parse(fs.readFileSync("players.json"));
-    res.status(200).send(JSON.stringify(players))
-})
+app.get("/gameState", async (req, res) => {
+    gameState = { players: players, playerOnTurn: playerOnTurn };
+    res.json(gameState);
+});
 
-app.post('/guess', async (req, res) => {
-    let guess = req.body.guess
-    let players = JSON.parse(fs.readFileSync("players.json"));
-    res.send(`guess: ${guess}, player: ${players[playerOnTurn]}`)
-    playerOnTurn = (playerOnTurn + 1) % numPlayers
-    
-
-})
+app.post("/guess", async (req, res) => {
+    let guess = req.body.guess;
+    if (guess.name === players[playerOnTurn]) {
+        let players = JSON.parse(fs.readFileSync("players.json"));
+        res.send({ guess: guess.word, player: players[playerOnTurn] });
+    } else {
+        res.send({ guess: false });
+    }
+    playerOnTurn = (playerOnTurn + 1) % numPlayers;
+});
 app.use("/", express.static(path.join(__dirname, "public")));
 app.listen(PORT, () => {
-  console.log(`Listening on ${PORT}`);
+    console.log(`Listening on ${PORT}`);
 });
