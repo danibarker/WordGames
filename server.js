@@ -38,7 +38,7 @@ app.get("/gameState", async (req, res) => {
 });
 
 app.post("/guess", async (req, res) => {
-    let guess = req.body.guess;
+    let guess = req.body.guess.toUpperCase().trim();
     if (req.body.name === gameState.players[gameState.playerOnTurn].name) {
         response = deadends.guess(gameState.currentWord, guess, gameState.guessed)
         if (response.loseTurn || response.valid) {
