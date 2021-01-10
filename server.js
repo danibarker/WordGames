@@ -58,6 +58,7 @@ app.post("/guess", async (req, res) => {
             currentWord: deadends.start(),
             guessed: [],
             players: [],
+            fails:[]
         };
         res.json({loseTurn:false,valid:false,message:"Reset"})
     }
