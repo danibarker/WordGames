@@ -12,13 +12,14 @@ let gameState = JSON.parse(fs.readFileSync("gameState.json"));
 app.use(express.json());
 
 app.get("/start", async (req, res) => {
-    gameState = {
-        numPlayers: gameState.numPlayers,
-        playerOnTurn: 0,
-        currentWord: "",
-        guessed: [],
-        players: gameState.players,
-    };
+    // gameState = {
+    //     numPlayers: gameState.numPlayers,
+    //     playerOnTurn: gameState.numPlayers,
+    //     currentWord: gameState.currentWord,
+    //     guessed: gameState.guessed,
+    //     players: gameState.players,
+    //     fails:gameState.fails
+    // };
     if (!gameState.currentWord) {
         gameState.currentWord = deadends.start();
     }
