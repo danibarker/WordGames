@@ -12,7 +12,16 @@ let gameState = JSON.parse(fs.readFileSync("gameState.json"));
 app.use(express.json());
 
 app.get("/start", async (req, res) => {
-    
+    gameState = {
+        numPlayers: gameState.numPlayers,
+        playerOnTurn: 0,
+        currentWord: "",
+        guessed: [],
+        players: gameState.players,
+    };
+    if (!gameState.currentWord) {
+        gameState.currentWord = deadends.start();
+    }
     res.json(gameState);
 });
 app.get("/login/:name", async (req, res) => {
@@ -34,10 +43,7 @@ app.get("/gameState", async (req, res) => {
 });
 
 app.get("/myTurn/:name/:leng", async (req, res) => {
-    if (
-    
-        req.params.leng != gameState.guessed.length + gameState.fails.length
-    ) {
+    if (req.params.leng != gameState.guessed.length + gameState.fails.length) {
         res.send("t");
     } else {
         res.send("f");
@@ -45,6 +51,15 @@ app.get("/myTurn/:name/:leng", async (req, res) => {
 });
 
 app.post("/guess", async (req, res) => {
+    if (req.body.guess == "&reset") {
+        gameState = {
+            numPlayers: 0,
+            playerOnTurn: 0,
+            currentWord: deadends.start(),
+            guessed: [],
+            players: [],
+        };
+    }
     let guess = req.body.guess.toUpperCase().trim();
     if (req.body.name === gameState.players[gameState.playerOnTurn].name) {
         response = deadends.guess(
