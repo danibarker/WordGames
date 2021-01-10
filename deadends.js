@@ -7,28 +7,42 @@ let alphaDic = JSON.parse(fs.readFileSync("twl_alpha.json", "utf8"));
 let tree = {};
 let path = {};
 
-const guess = (prev, word, guessed) => {
+const guess = (prev, word, guessed, fails) => {
     if (lexicon[word]) {
-        if (searchTree(prev, prev, 0, 1)) {
+        if (searchTree(prev, prev, 0, 1)[word]) {
             if (
                 !guessed.includes(word) &&
                 word != prev + "S" &&
                 prev != word + "S"
             ) {
-                guessed.push(word);
+                guessed.unshift(word);
                 currentWord = word;
-
+                for (var member in tree) delete tree[member];
                 searchTree(currentWord, currentWord, 0, 1);
-                console.log(Object.keys(tree));
+                
                 if (
                     Object.keys(tree).every((w) =>
-                        [...guessed, currentWord + "S"].includes(w)
+                        [
+                            ...guessed,
+                            currentWord + "S",
+                            currentWord.substring(currentWord.length - 2) == "S"
+                                ? currentWord.substring(
+                                      0,
+                                      currentWord.length - 1
+                                  )
+                                : currentWord + "S",
+                        ].includes(w)
                     )
                 ) {
-                    return "Game Over, no more valid answers";
+                    return {
+                        loseTurn: false,
+                        valid: true,
+                        message: "Game Over, no more valid answers",
+                    };
                 }
                 return { valid: true, message: `${word} is a valid guess` };
             } else {
+                fails.push(word)
                 return {
                     loseTurn: false,
                     valid: false,
@@ -37,14 +51,20 @@ const guess = (prev, word, guessed) => {
                 };
             }
         } else {
+            fails.push(word)
             return {
                 loseTurn: false,
                 valid: false,
-                message: `${word} is not a valid move from ${prev}`,
+                message: `${word} is not a valid move from ${prev}, try again`,
             };
         }
     } else {
-        return {loseTurn:true,valid:false, message: `${word} is not in TWL` };
+        fails.push(word)
+        return {
+            loseTurn: true,
+            valid: false,
+            message: `${word} is not in TWL`,
+        };
     }
 };
 
@@ -113,5 +133,4 @@ const findAnagrams = (s) => {
 
     return alphaDic[s];
 };
-
 module.exports = { start, guess };

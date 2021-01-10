@@ -1,1 +1,1 @@
-{"numPlayers":0,"playerOnTurn":0,"currentWord":"TA","guessed":[],"players":[]}
+{"fails":["SAWMFD","WINTER","SAW","","","","PAWN","FROT"],"numPlayers":2,"playerOnTurn":0,"currentWord":"PAWS","guessed":["PAWS","LAWS","LAWN","PAWN","PAW","WAP","WAS","SAW","SAD","RAD","BAD","LAD","WAD","WED","DEW"],"players":[{"name":"l","score":0},{"name":"scooper","score":0}]}

@@ -5,7 +5,7 @@ window.onbeforeunload = () => {
 
 const guessInput = document.querySelector("#guess-input");
 guessInput.addEventListener("keypress", (event) => {
-    console.log(event);
+    
     if (event.key == "Enter") {
         guess(event.target.value, window.localStorage.getItem("username"));
     }
@@ -35,13 +35,19 @@ const logout = async () => {
     window.localStorage.removeItem("username");
 };
 const start = async () => {
-    const res = await fetch('/start')
-    const first = await res.json()
-    const currentWord = document.getElementById('current-word')
-    currentWord.innerText = `Current word: ${first.currentWord}`
-    const game = document.getElementById('game')
-    game.classList.remove('hidden')
-}
+    gameState.guessed = [];
+    gameState.fails = [];
+    let res = await fetch("/start");
+    const first = await res.json();
+    const currentWord = document.getElementById("current-word");
+    currentWord.innerText = `Current word: ${first.currentWord}`;
+    const game = document.getElementById("game");
+    game.classList.remove("hidden");
+
+    res = await fetch("/gameState");
+    gameState = await res.json();
+    loadPage()
+};
 const guess = async (word, name) => {
     const body = { name: name, guess: word };
     const request = new Request("/guess", {
@@ -57,33 +63,55 @@ const guess = async (word, name) => {
     message.innerText = data.message;
     guessInput.value = "";
 };
-
+let gameState;
+res = fetch("/gameState").then((res) => {
+    res.json().then((g) => {
+        gameState = g;
+        loadPage()
+    });
+});
 setInterval(async () => {
-    let res = await fetch("/gameState");
-    let players = document.getElementById("players");
-    const currentWord = document.getElementById('current-word')
-    let gameState = await res.json();
-    currentWord.innerText = "Current Word: "+gameState.currentWord
-    players.innerHTML = "";
-    for (player of gameState.players) {
-        let tableRow = document.createElement("tr");
-        let p = document.createElement("td");
-        tableRow.appendChild(p);
-        p.innerText = player.name;
-        players.appendChild(tableRow);
+    
+    let res = await fetch(
+        "/myTurn/" +
+            window.localStorage.getItem("username") +
+            "/" +
+            (gameState.guessed.length + gameState.fails.length)
+    );
+    let myTurn = await res.text();
+    
+    if (myTurn === "t") {
+        res = await fetch("/gameState");
+        gameState = await res.json();
+        loadPage()
     }
-    let playerOnTurn = document.getElementById("on-turn");
-    let onTurn = gameState.players[gameState.playerOnTurn];
-    playerOnTurn.innerText = onTurn
-        ? "On turn: " + onTurn.name
-        : "Waiting for players to join";
-    const guessed = document.getElementById('guessed')
-    guessed.innerHTML=''
-    gameState.guessed.forEach((word) => {
-        let wordRow = document.createElement('tr')
-        let wordData = document.createElement('td')
-        wordData.innerText=word
-        wordRow.appendChild(wordData)
-        guessed.appendChild(wordRow)
-    })
 }, 1000);
+
+const loadPage = () => {
+    let players = document.getElementById("players");
+        const currentWord = document.getElementById("current-word");
+
+        currentWord.innerText = "Current Word: " + gameState.currentWord;
+        players.innerHTML = "";
+        for (player of gameState.players) {
+            let tableRow = document.createElement("tr");
+            let p = document.createElement("td");
+            tableRow.appendChild(p);
+            p.innerText = player.name;
+            players.appendChild(tableRow);
+        }
+        let playerOnTurn = document.getElementById("on-turn");
+        let onTurn = gameState.players[gameState.playerOnTurn];
+        playerOnTurn.innerText = onTurn
+            ? "On turn: " + onTurn.name
+            : "Waiting for players to join";
+        const guessed = document.getElementById("guessed");
+        guessed.innerHTML = "";
+        gameState.guessed.forEach((word) => {
+            let wordRow = document.createElement("tr");
+            let wordData = document.createElement("td");
+            wordData.innerText = word;
+            wordRow.appendChild(wordData);
+            guessed.appendChild(wordRow);
+        });
+}

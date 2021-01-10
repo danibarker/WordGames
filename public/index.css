@@ -1,3 +1,17 @@
+ * {filter: invert(1);
+    
+    
+    
+}
+#playersDiv td,th , #guessDiv h2 {
+    color:#cfcfcf
+}
+ #current-word {
+    color:#414141
+}
+h1,h2,h3{
+    color:#cfcfcf
+}
 .hidden {
     visibility: hidden;
 }
@@ -7,14 +21,19 @@
     height: 100%;
 }
 #logout{
+    z-index: 3;
     position: absolute;
     bottom: 20px;
     left: 20px;
 }
 #login {
-   position: absolute;
-   left:50%;
-   top:50%;
+    width: 100%;
+    z-index: 3;
+    position: absolute;
+    height: 100%;
+    background: white;
+    text-align: center;
+    
 }
 #game {
     width:33%;
@@ -45,5 +64,139 @@
     display:flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    
+}
+@media only screen and (min-width:501px){
+    #name-input{
+        height:50px;
+        font-size: 15px;
+    }
+    #guess-button {
+        margin: 10px 0 10px 0;
+        width:100%;
+    }
+    #guess-input {
+        padding-left: 10px;
+        height: 50px;
+        font-size: 20px;
+    width: 100%;
+    }
+    .main {
+        margin-top: 20%;
+    display: flex;
+    justify-content: space-around;
+    height: 75%;
+    }
+    #game,#right-panel,#playersDiv {
+        margin-left:20px;
+        margin-right:20px;
+    }
+    #title{
+        position: absolute;
+       
+        text-align: center;
+        
+        top: -150px;
+        width: 100%;
+    }
+    #title h1{
+        font-size: 100px;
+        color: white;
+    }
+    #login h1{
+        visibility: hidden;
+    }
+}
+@media only screen and (max-width:500px){
+    #title{
+        position: absolute;
+        
+    }
+    
+    #login {
+        
+        padding: 40% 3%;
+
+    }
+    #login input {
+        width: 100%;
+        height: 50px;
+    }
+    #login button {
+        width: 100%;
+        height: 50px;
+    }
+    .main {
+        display: flex;
+    justify-content: space-around;
+    height: 100%;
+    width: 100%;
+    
+    flex-direction: column;
+    }
+    #playersDiv {
+        margin-top:20px;
+        margin-bottom: 45px;
+        text-align: center;
+        width: 100%;
+    height: 200px;
+    overflow-y: scroll;
+    }
+    #playersDiv::-webkit-scrollbar {
+        width: 12px;
+    }
+     
+    #playersDiv::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+        border-radius: 10px;
+    }
+     
+    #playersDiv::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    }
+    #game {
+        width: 100%;
+        height: 300px;
+        text-align: center;
+    }
+    #on-turn {
+        font-size: 30px;
+    }
+    #guess-input {
+        height: 50px;
+    width: 100%;
+    }
+    #guess-button {
+        width: 100%;
+    height: 50px;
+    margin-bottom: 20px;
+    }
+    #right-panel{
+        width: 100%;
+    height: 200px;
+    text-align: center;
+  
+    
+    max-height: unset;
+    display: unset;
+    flex-direction: unset;
+    align-items: unset;
+    justify-content: unset;
+    margin-top: unset;
+    }
+    #guessDiv {
+        height: 100%;
+        overflow-y: scroll;
+    }
+    #logout {
+        bottom:0px;
+    }
+    #logout button {
+        height: 50px;
+        margin-bottom: 5px;
+    }
+    #guessed {
+        font-size: 30px;
+    }
 }
