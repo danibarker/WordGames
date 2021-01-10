@@ -59,6 +59,7 @@ app.post("/guess", async (req, res) => {
             guessed: [],
             players: [],
         };
+        res.json({loseTurn:false,valid:false,message:"Reset"})
     }
     let guess = req.body.guess.toUpperCase().trim();
     if (req.body.name === gameState.players[gameState.playerOnTurn].name) {
