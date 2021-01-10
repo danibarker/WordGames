@@ -3,5 +3,6 @@
     "playerOnTurn": 0,
     "currentWord": "",
     "guessed": [],
-    "players": []
+    "players": [],
+    "fails":[]
 }
