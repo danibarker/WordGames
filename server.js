@@ -2,41 +2,57 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs");
+const deadends = require('./deadends');
+
 const PORT = process.env.PORT || 5001;
 const app = express();
-let playerOnTurn = 0;
-let numPlayers = 0;
-let players = [];
-let gameState = {};
+
+let gameState = JSON.parse(fs.readFileSync("gameState.json"));
+
+
+
+
 app.use(express.json());
+
+app.get("/start", async (req, res) => {
+    gameState = {"numPlayers":gameState.numPlayers,"playerOnTurn":0,"currentWord":"","guessed":[],"players":gameState.players}
+    gameState.currentWord = deadends.start()
+    res.send(gameState)
+});
 app.get("/login/:name", async (req, res) => {
-    players = JSON.parse(fs.readFileSync("players.json"));
-    players.push(req.params.name);
-    numPlayers = players.length;
-    fs.writeFileSync("players.json", JSON.stringify(players));
+    
+    gameState.players.push({ "name": req.params.name, "score":0 });
+    gameState.numPlayers = gameState.players.length;
+    fs.writeFileSync("gameState.json", JSON.stringify(gameState));
     res.status(200).send(req.params.name);
 });
 app.get("/logout/:name", async (req, res) => {
-    players = JSON.parse(fs.readFileSync("players.json"));
-    players = players.filter((user) => user != req.params.name);
-    numPlayers = players.length;
-    fs.writeFileSync("players.json", JSON.stringify(players));
+    console.log('logging out',req.params.name)
+    gameState.players = gameState.players.filter((user) => user.name != req.params.name);
+    gameState.numPlayers = gameState.players.length;
+    fs.writeFileSync("gameState.json", JSON.stringify(gameState));
     res.sendStatus(201);
 });
 app.get("/gameState", async (req, res) => {
-    gameState = { players: players, playerOnTurn: playerOnTurn };
     res.json(gameState);
 });
 
 app.post("/guess", async (req, res) => {
     let guess = req.body.guess;
-    if (guess.name === players[playerOnTurn]) {
-        let players = JSON.parse(fs.readFileSync("players.json"));
-        res.send({ guess: guess.word, player: players[playerOnTurn] });
+    if (req.body.name === gameState.players[gameState.playerOnTurn].name) {
+        response = deadends.guess(gameState.currentWord, guess, gameState.guessed)
+        if (response.loseTurn || response.valid) {
+            gameState.playerOnTurn = (gameState.playerOnTurn + 1) % gameState.numPlayers;
+            
+            gameState.currentWord = response.valid ? guess : gameState.currentWord
+            console.log(gameState.currentWord)
+        }
+        fs.writeFileSync("gameState.json", JSON.stringify(gameState));
+        res.send(response)
     } else {
-        res.send({ guess: false });
+        res.sendStatus(203)
     }
-    playerOnTurn = (playerOnTurn + 1) % numPlayers;
+    
 });
 app.use("/", express.static(path.join(__dirname, "public")));
 app.listen(PORT, () => {
