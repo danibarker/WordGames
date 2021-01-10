@@ -1,1 +1,7 @@
-{"fails":[],"players":[]}
+{
+    "numPlayers": 0,
+    "playerOnTurn": 0,
+    "currentWord": "",
+    "guessed": [],
+    "players": []
+}
