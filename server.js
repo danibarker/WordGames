@@ -10,8 +10,9 @@ const app = express();
 let gameState = JSON.parse(fs.readFileSync("gameState.json"));
 
 app.use(express.json());
-
+app.use(cors())
 app.get("/start", async (req, res) => {
+    console.log('here',gameState)
     // gameState = {
     //     numPlayers: gameState.numPlayers,
     //     playerOnTurn: gameState.numPlayers,
@@ -21,14 +22,17 @@ app.get("/start", async (req, res) => {
     //     fails:gameState.fails
     // };
     if (!gameState.currentWord) {
+        console.log('started')
         gameState.currentWord = deadends.start();
     }
     res.json(gameState);
 });
 app.get("/login/:name", async (req, res) => {
+    console.log(req.params.name)
     gameState.players.push({ name: req.params.name, score: 0 });
     gameState.numPlayers = gameState.players.length;
     fs.writeFileSync("gameState.json", JSON.stringify(gameState));
+    console.log('login')
     res.status(200).send(req.params.name);
 });
 app.get("/logout/:name", async (req, res) => {
@@ -52,6 +56,7 @@ app.get("/myTurn/:name/:leng", async (req, res) => {
 });
 
 app.post("/guess", async (req, res) => {
+    console.log(req.body)
     if (req.body.guess == "&reset") {
         gameState = {
             numPlayers: 0,
