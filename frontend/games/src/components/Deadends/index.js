@@ -12,7 +12,7 @@ import {
     getGameState,
     startAction,
 } from "../../redux/actions";
-const client = new WS("ws://wordgamesonlinews.herokuapp.com/");
+const client = new WS("wss://wordgamesonlinews.herokuapp.com/");
 client.onopen = () => {
     console.log("WebSocket Client Connected");
 };
