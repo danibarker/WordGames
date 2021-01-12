@@ -1,57 +1,56 @@
-import Axios from "axios";
-export const startAction = () => {
+export const startAction = (gameState) => {
     return async (dispatch) => {
-        let response = await Axios.get('http://localhost:5001/start')
+        // let response = await Axios.get("http://localhost:5001/start");
+        console.log("dispatching start action", gameState);
         dispatch({
             type: "START",
-            payload:response.data
-        })
-    }
-}
-export const loginAction = (username) => {
-
-    return async (dispatch) => {
-        let response = await Axios.get(`http://localhost:5001/login/${username}`);
-        console.log(response)
-            let name = response.data
-
-        dispatch({
-            type: "LOGIN",
-            payload: name,
+            payload: gameState,
         });
     };
 };
-export const logoutAction = (username) => {
+export const loginAction = (username) => {
+    return async (dispatch) => {
+        // let response = await Axios.get(
+        //     `http://localhost:5001/login/${username}`
+        // );
+        // console.log(response);
+        // let name = response.data;
+
+        dispatch({
+            type: "LOGIN",
+            payload: username,
+        });
+    };
+};
+export const logoutAction = () => {
     return (dispatch) => {
-        Axios.get("http://localhost:5001/logout/" + username);
         dispatch({
             type: "LOGOUT",
         });
     };
 };
 
-export const guessAction = (word,player) => {
-    return async (dispatch, getState) => {
-        const body = { name: player, guess: word };
-        let response = await Axios.post('http://localhost:5001/guess', body);
+export const guessAction = (validate) => {
+    return async (dispatch) => {
+        // const body = { name: player, guess: word };
+        // let response = await Axios.post("http://localhost:5001/guess", body);
         //response example {loseTurn:false,valid:false,message:"Reset"}
 
         dispatch({
             type: "GUESS",
-            payload: response.data,
+            payload: validate,
         });
     };
 };
 
-export const getGameState = () => {
-    return async (dispatch, getState) => {
-        
-        const response = await Axios.get("http://localhost:5001/gameState");
-        const data = await response.json();
+export const getGameState = (gameState) => {
+    return async (dispatch) => {
+        // const response = await Axios.get("http://localhost:5001/gameState");
+        // const data = response.data
 
         dispatch({
             type: "GET_GAME_STATE",
-            payload: data,
+            payload: gameState,
         });
     };
-}
+};

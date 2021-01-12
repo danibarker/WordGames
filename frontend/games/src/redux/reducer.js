@@ -1,22 +1,41 @@
 const initState = {
-    message: '',user: {}, gameState: {}, loggedIn: false};
+    message: "",
+    user: {},
+    gameState: {
+        numPlayers: 0,
+        playerOnTurn: 0,
+        currentWord: "",
+        guessed: [],
+        players: [
+            {name:''}
+        ],
+        fails: [],
+        message:''
+    },
+    loggedIn: false,
+};
 
-const productReducer = (state = initState, action) => {
+const reducer = (state = initState, action) => {
     let newState = { ...state };
     switch (action.type) {
         case "START":
-            newState.gameState = action.payload
-            return newState
+            console.log('reducing start',action.payload)
+            newState.gameState = action.payload;
+            console.log('newState',newState)
+            return newState;
         case "LOGIN":
+            
             newState.user = { name: action.payload };
-            newState.loggedIn = true
+            newState.loggedIn = true;
+            
             return newState;
         case "LOGOUT":
-            newState.user = {}
-            newState.loggedIn = false
+            newState.user = {};
+            newState.loggedIn = false;
+            newState.message=''
             return newState;
         case "GUESS":
-            newState.message = action.payload.message;
+            newState.message = action.payload;
             return newState;
         case "GET_GAME_STATE":
             newState.gameState = action.payload;
@@ -26,4 +45,4 @@ const productReducer = (state = initState, action) => {
     }
 };
 
-export default productReducer;
+export default reducer;

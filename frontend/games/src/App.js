@@ -9,7 +9,7 @@ function App() {
             
                 <Switch>
                    
-                    <Route path="/" exact component={Home} />
+                    <Route path="/" exact component={Deadends} />
                     <Route path="/deadend" exact component={Deadends} />
                     <Route path="/anagrams" exact component={Anagrams} />
                 </Switch>

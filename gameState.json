@@ -1,1 +1,9 @@
-{"numPlayers":3,"playerOnTurn":0,"currentWord":"RODE","guessed":["RODE","REDO","RED","FED"],"players":[{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0}],"fails":["REDO"]}
+{
+    "numPlayers": 0,
+    "playerOnTurn": 0,
+    "currentWord": "AB",
+    "guessed": [],
+    "players": [],
+    "fails": [],
+    "message": ""
+}
