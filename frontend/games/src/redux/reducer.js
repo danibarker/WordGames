@@ -1,14 +1,14 @@
 const initState = {
     message: "",
+    username: "",
     user: {},
-    chatlog:
-        "",
+    chatlog: "",
     gameState: {
         numPlayers: 0,
         playerOnTurn: 0,
         currentWord: "",
         guessed: [],
-        players: [{ name: "" }],
+        players: [],
         fails: [],
         message: "",
     },
@@ -18,30 +18,35 @@ const initState = {
 const reducer = (state = initState, action) => {
     let newState = { ...state };
     switch (action.type) {
+        case "USERNAME":
+            newState.username = action.payload;
+            return newState;
         case "CHAT":
             newState.chatlog = action.payload;
             return newState;
         case "START":
-            console.log("reducing start", action.payload);
             newState.gameState = action.payload;
-            console.log("newState", newState);
             return newState;
         case "LOGIN":
-            newState.user = { name: action.payload };
-            newState.loggedIn = true;
+            if (newState.username === action.payload) {
+                newState.user = { name: action.payload };
+                newState.loggedIn = true;
+            }
 
             return newState;
         case "LOGOUT":
-            newState.user = {};
-            newState.loggedIn = false;
-            newState.message = "";
+            if (action.payload === newState.username) {
+                newState.user = {};
+                newState.username = "";
+                newState.loggedIn = false;
+                newState.message = "";
+            }
             return newState;
         case "GUESS":
             newState.message = action.payload;
             return newState;
         case "GET_GAME_STATE":
             newState.gameState = action.payload;
-            console.log(action.payload);
             if (action.payload.numPlayers === 0) {
                 newState.loggedIn = false;
                 newState.message = "";

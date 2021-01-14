@@ -1,10 +1,17 @@
 export const startAction = (gameState) => {
     return async (dispatch) => {
         // let response = await Axios.get("http://localhost:5001/start");
-        console.log("dispatching start action", gameState);
         dispatch({
             type: "START",
             payload: gameState,
+        });
+    };
+};
+export const setUsername = (username) => {
+    return async (dispatch) => {
+        dispatch({
+            type: "USERNAME",
+            payload: username,
         });
     };
 };
@@ -21,19 +28,18 @@ export const loginAction = (username) => {
         // let response = await Axios.get(
         //     `http://localhost:5001/login/${username}`
         // );
-        // console.log(response);
         // let name = response.data;
-
         dispatch({
             type: "LOGIN",
             payload: username,
         });
     };
 };
-export const logoutAction = () => {
+export const logoutAction = (username) => {
     return (dispatch) => {
         dispatch({
             type: "LOGOUT",
+            payload: username,
         });
     };
 };

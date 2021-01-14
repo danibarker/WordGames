@@ -3,7 +3,7 @@ const { lexicon } = require("./dictionary");
 
 const fs = require("fs");
 const { findDrops, findInserts, findSwaps } = require("./dictionary");
-let alphaDic = JSON.parse(fs.readFileSync("twl_alpha.json", "utf8"));
+let alphaDic = JSON.parse(fs.readFileSync("./game-logic/twl_alpha.json", "utf8"));
 let tree = {};
 let path = {};
 

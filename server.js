@@ -9,7 +9,7 @@ const {
     processGuess,
     processChat,
 } = require("./processMessages");
-const { loadGameState } = require("./fileManager");
+const { loadGameState } = require("./game-logic/fileManager");
 let chatlog = "";
 
 const PORT = process.env.PORT || 5002;
@@ -38,12 +38,11 @@ const processMessage = (data) => {
     gameState = loadGameState();
     switch (req.type) {
         case "CHAT":
-            chatlog = processChat(req.data, chatlog)
+            chatlog = processChat(req.data, chatlog);
             toSend = JSON.stringify({
                 type: "CHAT",
-                data: chatlog
+                data: chatlog,
             });
-            console.log(toSend)
             break;
         case "RESET":
             toSend = processReset(gameState);

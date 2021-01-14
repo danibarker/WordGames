@@ -18,7 +18,6 @@ const Chat = ({ client, username }) => {
         <>
             <ChatBubble
                 onClick={() => {
-                    console.log("clicked", chatOpen);
                     setChatOpen((cur) => !cur);
                 }}
                 visible={"visible"}

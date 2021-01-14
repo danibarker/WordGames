@@ -1,6 +1,6 @@
 // import fs from "fs";
 const fs = require('fs')
-let lexicon = JSON.parse(fs.readFileSync("twl.json", "utf8"));
+let lexicon = JSON.parse(fs.readFileSync("./game-logic/twl.json", "utf8"));
 let alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const findDrops = (s) => {
     let result = []

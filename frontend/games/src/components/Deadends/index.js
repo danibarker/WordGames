@@ -4,6 +4,7 @@ import Styles from "../../styled components/Deadends";
 import { useDispatch } from "react-redux";
 import { w3cwebsocket as WS } from "websocket";
 
+import CustomSocket from "./ws";
 import {
     loginAction,
     logoutAction,
@@ -11,29 +12,24 @@ import {
     getGameState,
     startAction,
     chatAction,
+    setUsername,
 } from "../../redux/actions";
 import Chat from "../Chat";
-let host = window.location.href
-host =host.replace('http', 'ws')
-host =host.replace('3000','5002')
 
-    console.log(host)
-let client = new WS(host);
-client.onopen = () => {
-    console.log("WebSocket Client Connected");
-};
+let host = window.location.href;
+host = host.replace("http", "ws");
+host = host.replace("3000", "5002");
 
 export default function Deadends() {
     const gameState = useSelector((state) => state.gameState);
-    const [username, setUsername] = useState("");
+    const username = useSelector((state) => state.username);
+    // const [username, setUsername] = useState("");
     const [chatOpen, setChatOpen] = useState(false);
     const [word, setWord] = useState("");
 
     const dispatch = useDispatch();
-    client.onmessage = (message) => {
+    function messageFunction(message) {
         let response = JSON.parse(message.data);
-        console.log("response", response);
-
         switch (response.type) {
             case "CHAT":
                 dispatch(chatAction(response.data));
@@ -42,11 +38,8 @@ export default function Deadends() {
                 dispatch(getGameState(response.data));
                 break;
             case "LOGIN":
-                if (response.data === username) {
-                    dispatch(loginAction(response.data));
-                } else {
-                    refresh();
-                }
+                dispatch(loginAction(response.data));
+
                 break;
             case "GUESS":
                 dispatch(guessAction(response.data)).then(() => {
@@ -57,11 +50,7 @@ export default function Deadends() {
                 dispatch(getGameState(response.data));
                 break;
             case "LOGOUT":
-                if (response.data === username) {
-                    dispatch(logoutAction());
-                } else {
-                    refresh();
-                }
+                dispatch(logoutAction(response.data));
 
                 break;
             case "START":
@@ -72,7 +61,13 @@ export default function Deadends() {
                 break;
         }
         dispatch(getGameState(response.data));
-    };
+    }
+    const [client, setClient] = useState(
+        new CustomSocket(host, messageFunction)
+    );
+    useEffect(() => {
+        client.connect();
+    }, [client]);
     const login = () => {
         client.send(JSON.stringify({ type: "LOGIN", data: username }));
     };
@@ -116,7 +111,7 @@ export default function Deadends() {
                             }
                         }}
                         onChange={(e) => {
-                            setUsername(e.target.value);
+                            dispatch(setUsername(e.target.value));
                         }}
                         type="text"
                     />
