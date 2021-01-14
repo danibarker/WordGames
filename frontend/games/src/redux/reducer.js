@@ -2,7 +2,7 @@ const initState = {
     message: "",
     user: {},
     chatlog:
-        "Another Line\nHere's another\nHere's one more\nDaniB:Hey guys how's it going, here's the new chat window feature.\nTilerunner:Neat",
+        "",
     gameState: {
         numPlayers: 0,
         playerOnTurn: 0,
