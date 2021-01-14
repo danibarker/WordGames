@@ -1,1 +1,10 @@
-{"numPlayers":22,"playerOnTurn":0,"currentWord":"SHIT","guessed":["SHIT","SHAT","HATS","BATS","STAB","TAB","NAB","DAB","LAB","CAB"],"players":[{"name":"danib","score":0},{"name":"james","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0},{"name":"daniv","score":0}],"fails":["","","","",""],"message":"SHIT is a valid guess"}
+{
+    "numPlayers": 0,
+    "playerOnTurn": 0,
+    "currentWord": "",
+    "guessed": [],
+    "players": [
+    ],
+    "fails": [],
+    "message": ""
+}
