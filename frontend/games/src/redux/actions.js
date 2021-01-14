@@ -8,6 +8,14 @@ export const startAction = (gameState) => {
         });
     };
 };
+export const chatAction = (chatlog) => {
+    return async (dispatch) => {
+        dispatch({
+            type: "CHAT",
+            payload: chatlog,
+        });
+    };
+};
 export const loginAction = (username) => {
     return async (dispatch) => {
         // let response = await Axios.get(

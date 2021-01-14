@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Styles from "../../styled components/Deadends";
 import { useDispatch } from "react-redux";
-import Axios from "axios";
 import { w3cwebsocket as WS } from "websocket";
 
 import {
@@ -11,8 +10,15 @@ import {
     guessAction,
     getGameState,
     startAction,
+    chatAction,
 } from "../../redux/actions";
-const client = new WS("wss://wordgamesonlinews.herokuapp.com/");
+import Chat from "../Chat";
+let host = window.location.href
+host =host.replace('http', 'ws')
+host =host.replace('3000','5002')
+
+    console.log(host)
+let client = new WS(host);
 client.onopen = () => {
     console.log("WebSocket Client Connected");
 };
@@ -20,20 +26,26 @@ client.onopen = () => {
 export default function Deadends() {
     const gameState = useSelector((state) => state.gameState);
     const [username, setUsername] = useState("");
-   
+    const [chatOpen, setChatOpen] = useState(false);
     const [word, setWord] = useState("");
 
     const dispatch = useDispatch();
     client.onmessage = (message) => {
         let response = JSON.parse(message.data);
-        console.log('response',response)
-        
+        console.log("response", response);
+
         switch (response.type) {
+            case "CHAT":
+                dispatch(chatAction(response.data));
+                break;
+            case "RESET":
+                dispatch(getGameState(response.data));
+                break;
             case "LOGIN":
                 if (response.data === username) {
                     dispatch(loginAction(response.data));
                 } else {
-                    refresh()
+                    refresh();
                 }
                 break;
             case "GUESS":
@@ -43,23 +55,23 @@ export default function Deadends() {
                 break;
             case "GAME_STATE":
                 dispatch(getGameState(response.data));
-                break
+                break;
             case "LOGOUT":
                 if (response.data === username) {
                     dispatch(logoutAction());
                 } else {
-                    refresh()
+                    refresh();
                 }
-             
-                break
+
+                break;
             case "START":
                 dispatch(startAction(response.data));
-                
-                break
+
+                break;
             default:
                 break;
         }
-        dispatch(getGameState(JSON.parse(message.data)));
+        dispatch(getGameState(response.data));
     };
     const login = () => {
         client.send(JSON.stringify({ type: "LOGIN", data: username }));
@@ -67,8 +79,7 @@ export default function Deadends() {
 
     const loggedIn = useSelector((state) => state.loggedIn);
     const refresh = () => {
-        client.send(JSON.stringify({type:"GAME_STATE",data:gameState}))
-        
+        client.send(JSON.stringify({ type: "GAME_STATE", data: gameState }));
     };
     const guess = () => {
         client.send(
@@ -78,20 +89,21 @@ export default function Deadends() {
             })
         );
     };
-
+    const reset = () => {
+        client.send(JSON.stringify({ type: "RESET" }));
+    };
     const logout = () => {
         client.send(JSON.stringify({ type: "LOGOUT", data: username }));
-        
     };
     const start = () => {
         client.send(JSON.stringify({ type: "START" }));
-        
     };
     // return !gameState.players ? (
     //     <></>
     // ) : (
-            return (
+    return (
         <>
+            <Chat client={client} username={username} />
             {!loggedIn ? (
                 <Styles.Login>
                     <h1 style={{ color: "#DDDDDD", textAlign: "center" }}>
@@ -119,10 +131,18 @@ export default function Deadends() {
                 </Styles.Login>
             ) : (
                 <>
-                    <Styles.Title>
-                        <h1>{username}</h1>
+                    <Styles.Title
+                        onClick={() => {
+                            setChatOpen(false);
+                        }}
+                    >
+                        <h1>Deadends</h1>]
                     </Styles.Title>
-                    <Styles.Logout>
+                    <Styles.Logout
+                        onClick={() => {
+                            setChatOpen(false);
+                        }}
+                    >
                         <button
                             className="btn btn-danger"
                             onClick={() => {
@@ -139,12 +159,32 @@ export default function Deadends() {
                         >
                             Join Game
                         </button>
+                        <button
+                            className="btn btn-success"
+                            onClick={() => {
+                                reset();
+                            }}
+                        >
+                            Reset All
+                        </button>
                     </Styles.Logout>
-                    <Styles.Main>
+                    <Styles.Main
+                        onClick={() => {
+                            setChatOpen(false);
+                        }}
+                    >
                         <Styles.Game>
                             <Styles.CurrentWord>
-                                        Current Word: {gameState.currentWord}
-                                        <br/>On Turn: {gameState.players? gameState.players[gameState.playerOnTurn]? gameState.players[gameState.playerOnTurn].name:'':''}
+                                Current Word: {gameState.currentWord}
+                                <br />
+                                On Turn:
+                                {gameState.players
+                                    ? gameState.players[gameState.playerOnTurn]
+                                        ? gameState.players[
+                                              gameState.playerOnTurn
+                                          ].name
+                                        : ""
+                                    : ""}
                             </Styles.CurrentWord>
 
                             <Styles.GuessInput
@@ -157,7 +197,22 @@ export default function Deadends() {
                                 onChange={(e) => {
                                     setWord(e.target.value);
                                 }}
-                                placeholder="Guess"
+                                placeholder={
+                                    gameState.players
+                                        ? gameState.players[
+                                              gameState.playerOnTurn
+                                          ]
+                                            ? gameState.players[
+                                                  gameState.playerOnTurn
+                                              ].name === username
+                                                ? "Your turn.  Enter Guess"
+                                                : gameState.players[
+                                                      gameState.playerOnTurn
+                                                  ].name +
+                                                  "'s turn.  Please Wait"
+                                            : ""
+                                        : ""
+                                }
                             />
                             <Styles.GuessButton
                                 onClick={() => {
@@ -168,7 +223,7 @@ export default function Deadends() {
                                 Guess
                             </Styles.GuessButton>
 
-                            <h3 id="message">{gameState.message || ''}</h3>
+                            <h3 id="message">{gameState.message || ""}</h3>
                         </Styles.Game>
                         <Styles.RightPanel>
                             <Styles.GuessDiv>
@@ -177,14 +232,17 @@ export default function Deadends() {
                                 </h2>
                                 <table>
                                     <Styles.Guessed>
-                                                    {(gameState.guessed) ?
-                                                        gameState.guessed.map((guess) => {
-                                            return (
-                                                <tr>
-                                                    <td>{guess}</td>
-                                                </tr>
-                                            );
-                                        }):<></>}
+                                        {gameState.guessed ? (
+                                            gameState.guessed.map((guess) => {
+                                                return (
+                                                    <tr>
+                                                        <td>{guess}</td>
+                                                    </tr>
+                                                );
+                                            })
+                                        ) : (
+                                            <></>
+                                        )}
                                     </Styles.Guessed>
                                 </table>
                             </Styles.GuessDiv>
@@ -196,13 +254,17 @@ export default function Deadends() {
                                     <tr>
                                         <td>Name</td>
                                     </tr>
-                                    {gameState.players?gameState.players.map((player) => {
-                                        return (
-                                            <tr>
-                                                <td>{player.name}</td>
-                                            </tr>
-                                        );
-                                    }):<></>}
+                                    {gameState.players ? (
+                                        gameState.players.map((player) => {
+                                            return (
+                                                <tr>
+                                                    <td>{player.name}</td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <></>
+                                    )}
                                 </thead>
                                 <tbody id="players"></tbody>
                             </table>

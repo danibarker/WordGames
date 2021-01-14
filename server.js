@@ -1,120 +1,75 @@
-
-
-
-
-
 const express = require("express");
+const { Server } = require("ws");
 const path = require("path");
-const cors = require("cors");
-const PORT = process.env.PORT || 5001;
-const app = express();
-app.use(express.json());
-app.use(cors());
-app.get("/start", async (req, res) => {
-    // gameState = {
-    //     numPlayers: gameState.numPlayers,
-    //     playerOnTurn: gameState.numPlayers,
-    //     currentWord: gameState.currentWord,
-    //     guessed: gameState.guessed,
-    //     players: gameState.players,
-    //     fails:gameState.fails
-    // };
-    try {
-        if (!gameState.currentWord) {
-            gameState.currentWord = deadends.start();
-        }
-        res.json(gameState);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
-app.get("/login/:name", async (req, res) => {
-    try {
-        gameState.players.push({ name: req.params.name, score: 0 });
-        gameState.numPlayers = gameState.players.length;
-        fs.writeFileSync("gameState.json", JSON.stringify(gameState));
+const {
+    processStart,
+    processReset,
+    processLogout,
+    processLogin,
+    processGuess,
+    processChat,
+} = require("./processMessages");
+const { loadGameState } = require("./fileManager");
+let chatlog = "";
 
-        res.status(200).send(req.params.name);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
-app.get("/logout/:name", async (req, res) => {
-    try {
-        gameState.players = gameState.players.filter(
-            (user) => user.name != req.params.name
-        );
-        gameState.numPlayers = gameState.players.length;
-        fs.writeFileSync("gameState.json", JSON.stringify(gameState));
-        res.sendStatus(201);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
-app.get("/gameState", async (req, res) => {
-    try {
-        res.json(gameState);
-    } catch (e) {
-        res.status(400).send(e);
-    }
+const PORT = process.env.PORT || 5002;
+
+let gameState = loadGameState();
+
+const server = express()
+    .use("/", express.static(path.join(__dirname, "public")))
+    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const wss = new Server({ server });
+
+wss.on("connection", (ws) => {
+    console.log("Client connected");
+
+    ws.on("close", () => console.log("Client disconnected"));
+
+    ws.on("message", (message) => {
+        processMessage(message);
+    });
 });
 
-app.get("/myTurn/:name/:leng", async (req, res) => {
-    try {
-        if (
-            req.params.leng !=
-            gameState.guessed.length + gameState.fails.length
-        ) {
-            res.send("t");
-        } else {
-            res.send("f");
-        }
-    } catch (e) {
-        res.status(400).send(e);
+const processMessage = (data) => {
+    let req = JSON.parse(data);
+    let toSend = "";
+    gameState = loadGameState();
+    switch (req.type) {
+        case "CHAT":
+            chatlog = processChat(req.data, chatlog)
+            toSend = JSON.stringify({
+                type: "CHAT",
+                data: chatlog
+            });
+            console.log(toSend)
+            break;
+        case "RESET":
+            toSend = processReset(gameState);
+            break;
+        case "LOGIN":
+            toSend = processLogin(gameState, req.data);
+
+            break;
+        case "LOGOUT":
+            toSend = processLogout(gameState, req.data);
+
+            break;
+        case "GUESS":
+            toSend = processGuess(gameState, req.data);
+            break;
+        case "START":
+            toSend = processStart(gameState);
+            break;
+        case "GAME_STATE":
+            toSend = JSON.stringify({ type: "GAME_STATE", data: gameState });
+            break;
+        default:
+            break;
     }
-});
 
-app.post("/guess", async (req, res) => {
-    try {
-        if (req.body.guess == "&reset") {
-            gameState = {
-                numPlayers: gameState.players.length,
-                playerOnTurn: 0,
-                currentWord: deadends.start(),
-                guessed: [],
-                players: gameState.players,
-                fails: [],
-            };
-            res.json({ loseTurn: false, valid: false, message: "" });
-        }
-        let guess = req.body.guess.toUpperCase().trim();
-        if (req.body.name === gameState.players[gameState.playerOnTurn].name) {
-            response = deadends.guess(
-                gameState.currentWord,
-                guess,
-                gameState.guessed,
-                gameState.fails
-            );
-            if (response.loseTurn || response.valid) {
-                gameState.playerOnTurn =
-                    (gameState.playerOnTurn + 1) % gameState.numPlayers;
-
-                gameState.currentWord = response.valid
-                    ? guess
-                    : gameState.currentWord;
-            }
-            fs.writeFileSync("gameState.json", JSON.stringify(gameState));
-            res.send(response);
-        } else {
-            res.sendStatus(203);
-        }
-    } catch (e) {
-        console.log(e);
-        res.status(400).send(e);
-    }
-});
-app.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`);
-});
-
-app.use("/", express.static(path.join(__dirname, "public")));
+    wss.clients.forEach((client) => {
+        client.send(toSend);
+    });
+};

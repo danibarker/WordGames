@@ -7,6 +7,10 @@ let components = {
             filter: invert(0);
             color: #dddddd;
         }
+        @media only screen and (max-height: 600px) {
+            position: absolute;
+            top: -1000px;
+        }
         @media only screen and (min-width: 501px) {
             margin-left: 20px;
             margin-right: 20px;
@@ -49,7 +53,7 @@ let components = {
         }
 
         &::-webkit-scrollbar-track {
-            box-shadow:inset 0 0 6px rgba(245, 0, 0, 0.5);
+            box-shadow: inset 0 0 6px rgba(245, 0, 0, 0.5);
             -webkit-box-shadow: inset 0 0 6px rgba(245, 0, 0, 0.5);
             border-radius: 10px;
         }
@@ -90,8 +94,11 @@ let components = {
         position: absolute;
         bottom: 20px;
         left: 20px;
-        filter:invert(0);
-
+        filter: invert(0);
+        @media only screen and (max-height: 620px) {
+            right: 10px;
+            left: unset;
+        }
         @media only screen and (max-width: 500px) {
             bottom: 0px;
 
@@ -103,13 +110,13 @@ let components = {
     `,
     Login: styled.div`
         padding: 25% 0 0 0;
-        filter:invert(0);
+        filter: invert(0);
         width: 100%;
         z-index: 3;
         position: absolute;
         height: 100%;
         text-align: center;
-        
+
         @media only screen and (max-width: 500px) {
             padding: 40% 3%;
 
@@ -161,7 +168,7 @@ let components = {
         }
     `,
     OnTurn: styled.div`
-        color:white;
+        color: white;
         @media only screen and (min-width: 501px) {
             font-size: 20px;
         }
@@ -176,6 +183,10 @@ let components = {
         }
     `,
     GuessButton: styled.button`
+        @media only screen and (max-height: 450px) {
+            position: absolute;
+            top: -1000px;
+        }
         @media only screen and (min-width: 501px) {
             margin: 10px 0 10px 0;
             width: 100%;

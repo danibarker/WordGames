@@ -1,0 +1,24 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="server-time"></div>
+    hey
+</body>
+<script>var HOST = location.origin.replace(/^http/, 'ws')
+    var ws = new WebSocket(HOST);
+    var el;
+    setInterval(() => {
+    ws.send(JSON.stringify({type:"GUESS",data:{username:"danib",guess:"APPLE"}}));
+       
+      }, 1000);
+    ws.onmessage = function (event) {
+      el = document.getElementById('server-time');
+      el.innerHTML = event.data;
+     
+    };
+    </script>
+</html>
