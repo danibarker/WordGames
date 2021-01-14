@@ -1,0 +1,1 @@
+If you make any changes to the front end, run "npm run build" in the frontend/games folder, then delete the files in the public folder of the root directory and paste the resulting files and folders that are in the build folder in frontend/games over to the public folder in the root directory.
