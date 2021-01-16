@@ -15,7 +15,9 @@ import {
     setUsername,
 } from "../../redux/actions";
 import Chat from "../Chat";
-
+setInterval(() => {
+    fetch('/keepAlive')
+}, 60000);
 let host = window.location.href;
 host = host.replace("http", "ws");
 host = host.replace("3000", "5002");
@@ -60,7 +62,7 @@ export default function Deadends() {
             default:
                 break;
         }
-        dispatch(getGameState(response.data));
+        // dispatch(getGameState(response.data));
     }
     const [client, setClient] = useState(
         new CustomSocket(host, messageFunction)
@@ -101,9 +103,6 @@ export default function Deadends() {
             <Chat client={client} username={username} />
             {!loggedIn ? (
                 <Styles.Login>
-                    <h1 style={{ color: "#DDDDDD", textAlign: "center" }}>
-                        {username}
-                    </h1>
                     <Styles.NameInput
                         onKeyUp={(e) => {
                             if (e.key === "Enter") {
@@ -131,7 +130,7 @@ export default function Deadends() {
                             setChatOpen(false);
                         }}
                     >
-                        <h1>Deadends</h1>]
+                        {/* <h1>Deadends</h1> */}
                     </Styles.Title>
                     <Styles.Logout
                         onClick={() => {
@@ -222,9 +221,9 @@ export default function Deadends() {
                         </Styles.Game>
                         <Styles.RightPanel>
                             <Styles.GuessDiv>
-                                <h2 style={{ marginRight: "20px" }}>
+                                <h3 style={{ marginRight: "20px" }}>
                                     Guessed words
-                                </h2>
+                                </h3>
                                 <table>
                                     <Styles.Guessed>
                                         {gameState.guessed ? (

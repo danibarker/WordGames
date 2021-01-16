@@ -1,3 +1,4 @@
+const cors = require('cors')
 const express = require("express");
 const { Server } = require("ws");
 const path = require("path");
@@ -17,6 +18,9 @@ const PORT = process.env.PORT || 5002;
 let gameState = loadGameState();
 
 const server = express()
+    .use(cors()).get('/keepAlive', (req, res) => {
+        res.send('hello')
+    })
     .use("/", express.static(path.join(__dirname, "public")))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
@@ -72,3 +76,9 @@ const processMessage = (data) => {
         client.send(toSend);
     });
 };
+
+let app = express()
+app.use(cors())
+app.get('/keepAlive', (req, res) => {
+    res.send('hello')
+})
