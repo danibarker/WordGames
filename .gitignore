@@ -3,3 +3,4 @@ node_modules
 /.vs/WordGames/config/applicationhost.config
 /.vs
 /frontend/games/.eslintcache
+/selenium/chromedriver.exe
