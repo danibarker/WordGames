@@ -1,4 +1,5 @@
 const initState = {
+    newMessages: 0,
     message: "",
     username: "",
     user: {},
@@ -18,11 +19,15 @@ const initState = {
 const reducer = (state = initState, action) => {
     let newState = { ...state };
     switch (action.type) {
+        case "READ_MESSAGES":
+            newState.newMessages = 0;
+            return newState;
         case "USERNAME":
             newState.username = action.payload;
             return newState;
         case "CHAT":
             newState.chatlog = action.payload;
+            newState.newMessages += 1;
             return newState;
         case "START":
             newState.gameState = action.payload;

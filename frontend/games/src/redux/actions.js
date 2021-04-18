@@ -1,3 +1,8 @@
+export const readMessages = () => {
+    return async (dispatch) => {
+        dispatch({type:"READ_MESSAGES"})
+    }
+}
 export const startAction = (gameState) => {
     return async (dispatch) => {
         // let response = await Axios.get("http://localhost:5001/start");

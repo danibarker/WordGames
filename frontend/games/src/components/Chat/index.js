@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
+import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
-const Chat = ({ client, username }) => {
+const Chat = ({ readMessages, client, username }) => {
     const [chatOpen, setChatOpen] = useState(false);
     const chatlog = useSelector((state) => state.chatlog);
-    const loggedIn = useSelector(state => state.loggedIn)
-    console.log(loggedIn)
+    const loggedIn = useSelector((state) => state.loggedIn);
+    const newMessages = useSelector((state) => state.newMessages);
+    const dispatch = useDispatch();
+    console.log(newMessages);
     const sendChat = (message) => {
         client.send(
             JSON.stringify({
@@ -21,12 +23,19 @@ const Chat = ({ client, username }) => {
             <ChatBubble
                 onClick={() => {
                     setChatOpen((cur) => !cur);
+                    dispatch(readMessages());
                 }}
-                
                 top={chatOpen ? 0 : 0}
-                visible = {loggedIn&&"visible"}
+                newMessages={!chatOpen && newMessages ? "red" : "inherit"}
+                visible={loggedIn && "visible"}
             />
-            <ChatWindow fullScreen={loggedIn ? "visible" : "hidden"} visible={chatOpen && loggedIn ? "visible" : "hidden"}>
+            <NumberMessages chatOpen={chatOpen ? "hidden" : "visible"}>
+                {newMessages > 0 ? newMessages : ""}
+            </NumberMessages>
+            <ChatWindow
+                fullScreen={loggedIn ? "visible" : "hidden"}
+                visible={chatOpen && loggedIn ? "visible" : "hidden"}
+            >
                 <TextArea>
                     {chatlog.split("\n").map((message, index) => (
                         <>
@@ -49,6 +58,18 @@ const Chat = ({ client, username }) => {
         </>
     );
 };
+let NumberMessages = styled.div`
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    right: 19px;
+    z-index: 6;
+    top: 6px;
+    color: red;
+    font-size: 25px;
+    margin: 0;
+    visibility: ${(props) => props.chatOpen};
+    
+`;
 let TextArea = styled.div`
     height: 70%;
     height: 60vh;
@@ -107,10 +128,11 @@ let ChatBubble = styled.svg`
     border-style: solid;
     z-index: 5;
     right: 0;
+    border-color: ${(props) => props.newMessages};
     top: ${(props) => props.top}%;
     visibility: ${(props) => props.visible || "hidden"};
-    @media only screen and (min-width:700px){
-        visibility:hidden;
+    @media only screen and (min-width: 700px) {
+        visibility: hidden;
     }
 `;
 export default Chat;

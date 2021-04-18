@@ -13,6 +13,7 @@ import {
     startAction,
     chatAction,
     setUsername,
+    readMessages
 } from "../../redux/actions";
 import Chat from "../Chat";
 setInterval(() => {
@@ -100,7 +101,7 @@ export default function Deadends() {
     // ) : (
     return (
         <>
-            <Chat client={client} username={username} />
+            <Chat readMessages={readMessages} client={client} username={username} />
             {!loggedIn ? (
                 <Styles.Login>
                     <Styles.NameInput

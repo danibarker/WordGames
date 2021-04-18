@@ -1,1 +1,1 @@
-{"numPlayers":3,"playerOnTurn":0,"currentWord":"BRRR","guessed":["BRRR","BURR","BUR","RUB","BUB","BUG","RUG","TRUG","TRIG","GRIT","GIT","GIN","GIF","FIG","FIT","FIX","FIXT","MIXT","MIX","MUX"],"players":[{"name":"danib","score":0},{"name":"danib","score":0},{"name":"danib","score":0}],"fails":["FROM","NO"],"message":"NO is not a valid move from BRRR, try again"}
+{"numPlayers":2,"playerOnTurn":0,"currentWord":"","guessed":[],"players":[{"name":"danib","score":0},{"name":"dan","score":0}],"fails":[],"message":""}
