@@ -20,6 +20,7 @@ const Chat = ({ readMessages, client, username }) => {
     };
     return (
         <>
+            
             <ChatBubble
                 onClick={() => {
                     setChatOpen((cur) => !cur);
@@ -28,10 +29,11 @@ const Chat = ({ readMessages, client, username }) => {
                 top={chatOpen ? 0 : 0}
                 newMessages={!chatOpen && newMessages ? "red" : "inherit"}
                 visible={loggedIn && "visible"}
-            />
-            <NumberMessages chatOpen={chatOpen ? "hidden" : "visible"}>
+            ><NumberMessages chatOpen={chatOpen ? "hidden" : "visible"}>
                 {newMessages > 0 ? newMessages : ""}
-            </NumberMessages>
+            </NumberMessages></ChatBubble>
+            
+           
             <ChatWindow
                 fullScreen={loggedIn ? "visible" : "hidden"}
                 visible={chatOpen && loggedIn ? "visible" : "hidden"}
@@ -60,15 +62,14 @@ const Chat = ({ readMessages, client, username }) => {
 };
 let NumberMessages = styled.div`
     background-color: rgba(0, 0, 0, 0);
-    position: absolute;
-    right: 19px;
-    z-index: 6;
-    top: 6px;
     color: red;
     font-size: 25px;
     margin: 0;
+    cursor: pointer;
     visibility: ${(props) => props.chatOpen};
-    
+    /* @media only screen and (min-width: 700px) {
+        visibility: hidden;
+    } */
 `;
 let TextArea = styled.div`
     height: 70%;
@@ -120,7 +121,7 @@ let ChatWindow = styled.div`
         visibility: ${(props) => props.visible || "hidden"};
     }
 `;
-let ChatBubble = styled.svg`
+let ChatBubble = styled.div`
     border-radius: ${(props) => props.radius || 50}%;
     width: 45px;
     height: 45px;
@@ -134,5 +135,8 @@ let ChatBubble = styled.svg`
     @media only screen and (min-width: 700px) {
         visibility: hidden;
     }
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 export default Chat;

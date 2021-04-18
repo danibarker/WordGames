@@ -21,7 +21,9 @@ const server = express()
     .use(cors()).get('/keepAlive', (req, res) => {
         res.send('hello')
     })
-    .use("/", express.static(path.join(__dirname, "public")))
+    .use("/",express.static(path.join(__dirname, "public")))
+    .use("/bogle", express.static(path.join(__dirname, "frontend/boggle/dist")))
+    .use("/deadends", express.static(path.join(__dirname, "public/deadends")))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });

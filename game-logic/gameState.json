@@ -1,1 +1,1 @@
-{"numPlayers":2,"playerOnTurn":0,"currentWord":"","guessed":[],"players":[{"name":"danib","score":0},{"name":"dan","score":0}],"fails":[],"message":""}
+{"numPlayers":4,"playerOnTurn":0,"currentWord":"","guessed":[],"players":[{"name":"danib","score":0},{"name":"dan","score":0},{"name":"danib","score":0},{"name":"tester","score":0}],"fails":[],"message":""}
