@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Styles from "../../styled components/Deadends";
 import { useDispatch } from "react-redux";
-import { w3cwebsocket as WS } from "websocket";
 
 import CustomSocket from "./ws";
 import {
@@ -21,6 +20,7 @@ setInterval(() => {
 }, 60000);
 let host = window.location.href;
 host = host.replace("http", "ws");
+host = host.replace("/deadends","")
 host = host.replace("3000", "5002");
 
 export default function Deadends() {

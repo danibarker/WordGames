@@ -1,4 +1,4 @@
-const cors = require('cors')
+const cors = require("cors");
 const express = require("express");
 const { Server } = require("ws");
 const path = require("path");
@@ -18,12 +18,19 @@ const PORT = process.env.PORT || 5002;
 let gameState = loadGameState();
 
 const server = express()
-    .use(cors()).get('/keepAlive', (req, res) => {
-        res.send('hello')
+    .use(cors())
+    .get("/keepAlive", (req, res) => {
+        res.send("hello");
     })
-    .use("/",express.static(path.join(__dirname, "public")))
-    .use("/bogle", express.static(path.join(__dirname, "frontend/boggle/dist")))
-    .use("/deadends", express.static(path.join(__dirname, "public/deadends")))
+    .use(
+        "/bogle",
+        express.static(path.join(__dirname, "frontend", "boggle", "dist"))
+    )
+    .use(
+        "/deadends",
+        express.static(path.join(__dirname, "public", "deadends"))
+    )
+    .use("/", express.static(path.join(__dirname, "public")))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
@@ -79,8 +86,8 @@ const processMessage = (data) => {
     });
 };
 
-let app = express()
-app.use(cors())
-app.get('/keepAlive', (req, res) => {
-    res.send('hello')
-})
+let app = express();
+app.use(cors());
+app.get("/keepAlive", (req, res) => {
+    res.send("hello");
+});
